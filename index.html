@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Дослідження операцій | Буханцев М. В. | КрНУ</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --card-border: #30363d;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --primary: #58a6ff;
+      --primary-hover: #1f6feb;
+      --success: #2ea043;
+      --warning: #d29922;
+      --danger: #f85149;
+      --accent: #8957e5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
+    header { background: #161b22; border-bottom: 1px solid var(--card-border); padding: 20px 30px; position: sticky; top: 0; z-index: 100; }
+    .header-content { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; }
+    .logo-area h1 { font-size: 20px; color: #f0f6fc; font-weight: 700; }
+    .logo-area p { font-size: 13px; color: var(--text-muted); }
+    .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-btn { background: #21262d; border: 1px solid var(--card-border); color: var(--text-main); padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .nav-btn:hover { background: #30363d; color: #fff; }
+    .nav-btn.active { background: #1f6feb; border-color: #388bfd; color: #fff; }
+    
+    .container { max-width: 1200px; margin: 25px auto; padding: 0 20px; }
+    .badge { display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 600; border-radius: 12px; }
+    .badge-success { background: rgba(46, 160, 67, 0.2); color: #3fb950; border: 1px solid rgba(46, 160, 67, 0.4); }
+    .badge-info { background: rgba(56, 139, 253, 0.2); color: #58a6ff; border: 1px solid rgba(56, 139, 253, 0.4); }
+    
+    .grid-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 25px; }
+    .kpi-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 18px; }
+    .kpi-card h3 { font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .kpi-card .val { font-size: 26px; font-weight: 700; color: #f0f6fc; }
+    .kpi-card .sub { font-size: 12px; color: #3fb950; margin-top: 4px; }
+
+    .main-panel { display: grid; grid-template-columns: 360px 1fr; gap: 20px; }
+    @media (max-width: 900px) { .main-panel { grid-template-columns: 1fr; } }
+    
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 20px; }
+    .card h2 { font-size: 16px; font-weight: 700; color: #f0f6fc; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #c9d1d9; }
+    .form-group input { width: 100%; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 8px 10px; color: #fff; font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: #58a6ff; }
+    .calc-box { background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; font-size: 13px; font-family: monospace; color: #79c0ff; margin-bottom: 15px; }
+
+    canvas { background: #0d1117; border: 1px solid var(--card-border); border-radius: 8px; width: 100%; height: 500px; display: block; }
+    
+    .labs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 25px; }
+    .lab-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 16px; transition: transform 0.2s, border-color 0.2s; text-decoration: none; color: inherit; display: flex; flex-direction: column; justify-content: space-between; }
+    .lab-item:hover { transform: translateY(-2px); border-color: #58a6ff; }
+    .lab-item h4 { font-size: 15px; color: #f0f6fc; margin-bottom: 6px; }
+    .lab-item p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+
+    .report-view { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 30px; margin-top: 25px; display: none; }
+    .report-view h1, .report-view h2, .report-view h3 { color: #f0f6fc; margin-top: 20px; margin-bottom: 10px; }
+    .report-view table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    .report-view th, .report-view td { border: 1px solid var(--card-border); padding: 8px 12px; font-size: 13px; }
+    .report-view th { background: #21262d; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo-area">
+      <h1>ДОСЛІДЖЕННЯ ОПЕРАЦІЙ</h1>
+      <p>Кременчуцький національний університет ім. М. Остроградського | КН-24-1</p>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-btn active" onclick="showTab('interactive')">📊 Інтерактивна Лаба 1</button>
+      <button class="nav-btn" onclick="showTab('all-labs')">📚 Перелік Лабораторних (1–9)</button>
+      <button class="nav-btn" onclick="showTab('report')">📄 Офіційний Звіт ЛР1</button>
+      <a class="nav-btn" href="https://github.com/BuhancevMax/DO" target="_blank">🐙 GitHub Репозиторій</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Interactive Lab 1 Tab -->
+  <div id="tab-interactive">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+      <div>
+        <h2 style="font-size: 22px; color: #f0f6fc;">Лабораторна робота № 1: Двомірна задача лінійного програмування</h2>
+        <p style="color: var(--text-muted); font-size: 14px;">Варіант 4 (N = 4, k = 1) • Графічний та симплексний метод розв'язання</p>
+      </div>
+      <div>
+        <span class="badge badge-success">✓ Розрахунок верифіковано</span>
+        <span class="badge badge-info">Буханцев М. В.</span>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid-dashboard">
+      <div class="kpi-card">
+        <h3>Максимальний прибуток (W)</h3>
+        <div class="val" id="kpi-profit">2500.0 грн</div>
+        <div class="sub" id="kpi-profit-int">Цілочисельний: 2497.6 грн</div>
+      </div>
+      <div class="kpi-card">
+        <h3>Оптимальний план випуску</h3>
+        <div class="val" id="kpi-plan">A: 287.5 | B: 281.25</div>
+        <div class="sub" id="kpi-plan-int">У цілих виробах: А: 286, В: 282</div>
+      </div>
+      <div class="kpi-card">
+        <h3>Використання сировини</h3>
+        <div class="val" id="kpi-raw">1700 / 1700 од.</div>
+        <div class="sub">Залишок: 0.0 од. (100% завантаження)</div>
+      </div>
+      <div class="kpi-card">
+        <h3>Машинний час</h3>
+        <div class="val" id="kpi-time">1600 / 1600 год.</div>
+        <div class="sub">Залишок: 0.0 год. (100% завантаження)</div>
+      </div>
+    </div>
+
+    <div class="main-panel">
+      <!-- Left Controls Panel -->
+      <div class="card">
+        <h2>
+          <span>Параметри моделі</span>
+          <span style="font-size: 12px; color: var(--primary);">Варіант 4</span>
+        </h2>
+
+        <div class="form-group">
+          <label>Номер у журналі (N):</label>
+          <input type="number" id="inputN" value="4" min="1" max="50" oninput="recalculate()" />
+        </div>
+        <div class="form-group">
+          <label>Коефіцієнт групи (k):</label>
+          <input type="number" id="inputK" value="1" min="1" max="10" step="0.1" oninput="recalculate()" />
+        </div>
+        <div class="form-group">
+          <label>Запас сировини (од.):</label>
+          <input type="number" id="inputRaw" value="1700" step="50" oninput="recalculate()" />
+        </div>
+        <div class="form-group">
+          <label>Запас машинного часу (год.):</label>
+          <input type="number" id="inputTime" value="1600" step="50" oninput="recalculate()" />
+        </div>
+
+        <div class="form-group">
+          <label>Рівень цільової лінії (W-slider):</label>
+          <input type="range" id="sliderW" min="0" max="3000" value="2500" oninput="drawCanvas()" />
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-top:4px;">
+            <span>0</span>
+            <span id="sliderWVal" style="color:var(--primary); font-weight:bold;">2500</span>
+            <span>3000</span>
+          </div>
+        </div>
+
+        <div class="calc-box" id="modelFormula">
+          W = 4.0·x₁ + 4.8·x₂ → max<br>
+          L₁: 2.0·x₁ + 4.0·x₂ ≤ 1700<br>
+          L₂: 4.0·x₁ + 1.6·x₂ ≤ 1600<br>
+          x₁, x₂ ≥ 0
+        </div>
+
+        <a href="reports/lab1/README.md" class="nav-btn active" style="width: 100%; justify-content: center; text-align: center;">
+          📄 Відкрити повний звіт з титулкою на GitHub
+        </a>
+      </div>
+
+      <!-- Right Chart Canvas -->
+      <div class="card">
+        <h2>
+          <span>Графічна модель області допустимих розв'язків (ОДР)</span>
+          <span style="font-size: 12px; color: #3fb950;">● Оптимум у точці перетину B</span>
+        </h2>
+        <canvas id="lpCanvas" width="800" height="500"></canvas>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px; text-align: center;">
+          Зелена область — ОДР; Синя лінія — запас сировини $L_1$; Червона лінія — машинний час $L_2$; Фіолетова стрілка — градієнт $\vec{c}$; Помаранчева лінія — лінія рівня $W$.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Labs Tab -->
+  <div id="tab-all-labs" style="display: none;">
+    <h2 style="font-size: 22px; color: #f0f6fc; margin-bottom: 8px;">Перелік лабораторних робіт курсу</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+      Дисципліна: «Дослідження операцій» • Кафедра АІС КрНУ • Викладач: Бурдільна Є. В.
+    </p>
+
+    <div class="labs-grid">
+      <a href="reports/lab1/README.md" class="lab-item" style="border-color: #388bfd;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 1: Двомірна ЗЛП</h4>
+            <span class="badge badge-success">Виконано (Вар. 4)</span>
+          </div>
+          <p>Графічний метод розв'язання двомірної задачі лінійного програмування, лінії рівня, градієнт, аналіз залишків.</p>
+        </div>
+        <span style="color: var(--primary); font-size: 13px; font-weight: 600;">Відкрити звіт ЛР 1 →</span>
+      </a>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 2: Оптимальне виробництво</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Багатовимірна задача лінійного програмування. Симплекс-метод, таблиці розв'язку.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 3: Нелінійне програмування</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Двовимірні задачі нелінійного програмування з квадратичними обмеженнями.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 4: Транспортна задача</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Закріплення постачальників за споживачами (методи північно-західного кута, Фогеля, мінімальної вартості).</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 5: Задача комівояжера</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Оптимальні кільцеві маршрути, метод найкоротшої з'єднувальної мережі, метод Свіра.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 6: Оптимальне положення</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Визначення розташування центрального складу методом умовного центру мас.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 7: Дискретне програмування</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Цілочисельні задачі лінійного програмування, метод відтинань Гоморі.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 8: Оптимальна траєкторія</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Динамічне програмування в неорієнтованих мережах за допомогою алгоритму Дейкстри.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+
+      <div class="lab-item">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4>ЛР № 9: Розподіл ресурсів</h4>
+            <span class="badge" style="background:#21262d; color:#8b949e;">Заплановано</span>
+          </div>
+          <p>Багатоетапні задачі інвестування підприємств, рівняння Беллмана.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 13px;">Структура підготовлена</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Report Tab -->
+  <div id="tab-report" class="report-view">
+    <div style="text-align: center; margin-bottom: 25px;">
+      <p style="text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: var(--text-muted);">
+        Міністерство освіти і науки України<br>
+        Кременчуцький національний університет імені Михайла Остроградського<br>
+        Навчально-науковий інститут електричної інженерії та інформаційних технологій<br>
+        Кафедра автоматизації та інформаційних систем
+      </p>
+      <h2 style="font-size: 20px; color: #fff; margin-top: 15px;">ОСВІТНІЙ КОМПОНЕНТ «ДОСЛІДЖЕННЯ ОПЕРАЦІЙ»</h2>
+      <h3 style="font-size: 18px; color: #58a6ff;">ЗВІТ З ЛАБОРАТОРНОЇ РОБОТИ № 1</h3>
+      <p style="font-weight: 600; font-size: 15px;">Тема: Двомірна задача лінійного програмування (Варіант 4)</p>
+      
+      <div style="margin: 20px auto; max-width: 400px; text-align: left; background: #21262d; padding: 15px; border-radius: 6px; font-size: 14px;">
+        <p><b>Виконав:</b> здобувач групи КН-24-1 <b>Буханцев М. В.</b></p>
+        <p><b>Перевірила:</b> доцент кафедри АІС <b>Бурдільна Є. В.</b></p>
+        <p style="text-align: right; color: var(--text-muted); margin-top: 8px;">Кременчук 2025</p>
+      </div>
+    </div>
+
+    <div style="background: #0d1117; padding: 20px; border-radius: 8px; border: 1px solid var(--card-border);">
+      <h3>Хід роботи</h3>
+      <p><b>Вихідні параметри:</b> $S_A = 2.0$, $T_A = 4.0$, $S_B = 4.0$, $T_B = 1.6$, $W_A = 4.0$, $W_B = 4.8$.</p>
+      <p><b>Цільова функція:</b> $W = 4 x_1 + 4.8 x_2 \to \max$</p>
+      <p><b>Обмеження:</b> $2 x_1 + 4 x_2 \le 1700$; $4 x_1 + 1.6 x_2 \le 1600$; $x_1, x_2 \ge 0$.</p>
+      
+      <table>
+        <tr>
+          <th>Параметр</th>
+          <th>Неперервний план</th>
+          <th>Цілочисельний план</th>
+        </tr>
+        <tr>
+          <td>Стіл А ($x_1$)</td>
+          <td>287.50 шт.</td>
+          <td>286 шт.</td>
+        </tr>
+        <tr>
+          <td>Стіл В ($x_2$)</td>
+          <td>281.25 шт.</td>
+          <td>282 шт.</td>
+        </tr>
+        <tr>
+          <td><b>Прибуток (W)</b></td>
+          <td><b>2500.00 грн</b></td>
+          <td><b>2497.60 грн</b></td>
+        </tr>
+        <tr>
+          <td>Залишок сировини</td>
+          <td>0.0 од. (100% вик.)</td>
+          <td>0.0 од. (100% вик.)</td>
+        </tr>
+        <tr>
+          <td>Залишок часу</td>
+          <td>0.0 год. (100% вик.)</td>
+          <td>4.8 год. (99.7% вик.)</td>
+        </tr>
+      </table>
+
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="reports/lab1/assets/graph_lab1.png" alt="Графік ЛР1" style="max-width: 100%; border-radius: 6px; border: 1px solid var(--card-border);">
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Рисунок 1 – Графічне розв'язання задачі лінійного програмування</p>
+      </div>
+
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="reports/lab1/assets/graph_lab1_zoom.png" alt="Окіл оптимуму" style="max-width: 100%; border-radius: 6px; border: 1px solid var(--card-border);">
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Рисунок 2 – Деталізований окіл точки оптимуму та цілочисельний аналіз</p>
+      </div>
+
+      <h3>Висновки</h3>
+      <p>
+        В результаті виконання лабораторної роботи за індивідуальним варіантом 4 побудовано область допустимих розв'язків та знайдено точку глобального максимуму $B(287.5; 281.25)$, що забезпечує $W_{\max} = 2500$ грн при $100\%$ використанні сировини та машинного часу. Для неподільних фізичних одиниць знайдено цілочисельний план $(286; 282)$ з прибутком $2497.6$ грн. Розрахунки верифіковано в середовищі Python.
+      </p>
+
+      <div style="margin-top: 20px; text-align: center;">
+        <a href="reports/lab1/README.md" class="nav-btn active">Відкрити оригінал звіту в GitHub Markdown →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let params = {
+    N: 4,
+    k: 1,
+    limitRaw: 1700,
+    limitTime: 1600,
+    SA: 2.0,
+    TA: 4.0,
+    SB: 4.0,
+    TB: 1.6,
+    WA: 4.0,
+    WB: 4.8,
+    optX1: 287.5,
+    optX2: 281.25,
+    wMax: 2500
+  };
+
+  function showTab(tab) {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('tab-interactive').style.display = (tab === 'interactive') ? 'block' : 'none';
+    document.getElementById('tab-all-labs').style.display = (tab === 'all-labs') ? 'block' : 'none';
+    document.getElementById('tab-report').style.display = (tab === 'report') ? 'block' : 'none';
+    
+    if (tab === 'interactive') {
+      document.querySelectorAll('.nav-btn')[0].classList.add('active');
+      drawCanvas();
+    } else if (tab === 'all-labs') {
+      document.querySelectorAll('.nav-btn')[1].classList.add('active');
+    } else if (tab === 'report') {
+      document.querySelectorAll('.nav-btn')[2].classList.add('active');
+    }
+  }
+
+  function recalculate() {
+    params.N = parseFloat(document.getElementById('inputN').value) || 4;
+    params.k = parseFloat(document.getElementById('inputK').value) || 1;
+    params.limitRaw = parseFloat(document.getElementById('inputRaw').value) || 1700;
+    params.limitTime = parseFloat(document.getElementById('inputTime').value) || 1600;
+
+    params.SA = 0.5 * params.N * params.k;
+    params.TA = params.N / params.k;
+    params.SB = params.N;
+    params.TB = 0.4 * params.N * params.k;
+    params.WA = params.N * params.k;
+    params.WB = 1.2 * params.N * params.k;
+
+    // Linear system solve:
+    // SA*x1 + SB*x2 = limitRaw
+    // TA*x1 + TB*x2 = limitTime
+    let det = params.SA * params.TB - params.SB * params.TA;
+    if (Math.abs(det) > 1e-6) {
+      params.optX1 = (params.limitRaw * params.TB - params.SB * params.limitTime) / det;
+      params.optX2 = (params.SA * params.limitTime - params.limitRaw * params.TA) / det;
+      params.wMax = params.WA * params.optX1 + params.WB * params.optX2;
+    }
+
+    document.getElementById('kpi-profit').innerText = params.wMax.toFixed(2) + ' грн';
+    document.getElementById('kpi-plan').innerText = `A: ${params.optX1.toFixed(2)} | B: ${params.optX2.toFixed(2)}`;
+    
+    document.getElementById('modelFormula').innerHTML = 
+      `W = ${params.WA.toFixed(1)}·x₁ + ${params.WB.toFixed(1)}·x₂ → max<br>` +
+      `L₁: ${params.SA.toFixed(1)}·x₁ + ${params.SB.toFixed(1)}·x₂ ≤ ${params.limitRaw}<br>` +
+      `L₂: ${params.TA.toFixed(1)}·x₁ + ${params.TB.toFixed(1)}·x₂ ≤ ${params.limitTime}<br>` +
+      `x₁, x₂ ≥ 0`;
+
+    document.getElementById('sliderW').max = Math.ceil(params.wMax * 1.3);
+    document.getElementById('sliderW').value = Math.round(params.wMax);
+    document.getElementById('sliderWVal').innerText = Math.round(params.wMax);
+
+    drawCanvas();
+  }
+
+  function drawCanvas() {
+    const canvas = document.getElementById('lpCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const padLeft = 60, padBottom = 50, padTop = 30, padRight = 30;
+    const plotW = width - padLeft - padRight;
+    const plotH = height - padBottom - padTop;
+
+    const maxX = 600, maxY = 600;
+
+    function toScreenX(x) { return padLeft + (x / maxX) * plotW; }
+    function toScreenY(y) { return padTop + (1 - y / maxY) * plotH; }
+
+    // Grid lines
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= maxX; x += 100) {
+      ctx.beginPath();
+      ctx.moveTo(toScreenX(x), toScreenY(0));
+      ctx.lineTo(toScreenX(x), toScreenY(maxY));
+      ctx.stroke();
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '11px sans-serif';
+      ctx.fillText(x, toScreenX(x) - 10, toScreenY(0) + 18);
+    }
+    for (let y = 0; y <= maxY; y += 100) {
+      ctx.beginPath();
+      ctx.moveTo(toScreenX(0), toScreenY(y));
+      ctx.lineTo(toScreenX(maxX), toScreenY(y));
+      ctx.stroke();
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '11px sans-serif';
+      ctx.fillText(y, padLeft - 30, toScreenY(y) + 4);
+    }
+
+    // Axes
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(toScreenX(0), toScreenY(0));
+    ctx.lineTo(toScreenX(maxX), toScreenY(0));
+    ctx.moveTo(toScreenX(0), toScreenY(0));
+    ctx.lineTo(toScreenX(0), toScreenY(maxY));
+    ctx.stroke();
+
+    // Vertices of polygon
+    const pO = [0, 0];
+    const pA = [params.limitTime / params.TA, 0];
+    const pB = [params.optX1, params.optX2];
+    const pC = [0, params.limitRaw / params.SB];
+
+    // Feasible Polygon Fill
+    ctx.fillStyle = 'rgba(46, 160, 67, 0.25)';
+    ctx.beginPath();
+    ctx.moveTo(toScreenX(pO[0]), toScreenY(pO[1]));
+    ctx.lineTo(toScreenX(pA[0]), toScreenY(pA[1]));
+    ctx.lineTo(toScreenX(pB[0]), toScreenY(pB[1]));
+    ctx.lineTo(toScreenX(pC[0]), toScreenY(pC[1]));
+    ctx.closePath();
+    ctx.fill();
+
+    // Constraint line 1 (Raw materials)
+    ctx.strokeStyle = '#1f6feb';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(toScreenX(0), toScreenY(params.limitRaw / params.SB));
+    ctx.lineTo(toScreenX(params.limitRaw / params.SA), toScreenY(0));
+    ctx.stroke();
+
+    // Constraint line 2 (Machine time)
+    ctx.strokeStyle = '#f85149';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(toScreenX(0), toScreenY(params.limitTime / params.TB));
+    ctx.lineTo(toScreenX(params.limitTime / params.TA), toScreenY(0));
+    ctx.stroke();
+
+    // Gradient Vector
+    const gradScale = 25;
+    const gX = params.WA * gradScale;
+    const gY = params.WB * gradScale;
+    ctx.strokeStyle = '#a371f7';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(toScreenX(0), toScreenY(0));
+    ctx.lineTo(toScreenX(gX), toScreenY(gY));
+    ctx.stroke();
+
+    // Arrowhead for gradient
+    const angle = Math.atan2(toScreenY(gY) - toScreenY(0), toScreenX(gX) - toScreenX(0));
+    ctx.fillStyle = '#a371f7';
+    ctx.beginPath();
+    ctx.moveTo(toScreenX(gX), toScreenY(gY));
+    ctx.lineTo(toScreenX(gX) - 15 * Math.cos(angle - Math.PI / 7), toScreenY(gY) - 15 * Math.sin(angle - Math.PI / 7));
+    ctx.lineTo(toScreenX(gX) - 15 * Math.cos(angle + Math.PI / 7), toScreenY(gY) - 15 * Math.sin(angle + Math.PI / 7));
+    ctx.closePath();
+    ctx.fill();
+
+    // Level Line (Slider)
+    const currentW = parseFloat(document.getElementById('sliderW').value);
+    document.getElementById('sliderWVal').innerText = currentW;
+    ctx.strokeStyle = '#d29922';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    const lx0 = 0, ly0 = currentW / params.WB;
+    const lx1 = currentW / params.WA, ly1 = 0;
+    ctx.moveTo(toScreenX(lx0), toScreenY(ly0));
+    ctx.lineTo(toScreenX(lx1), toScreenY(ly1));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Optimal Vertex Point B
+    ctx.fillStyle = '#f85149';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(toScreenX(pB[0]), toScreenY(pB[1]), 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Point Label
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(`B(${pB[0].toFixed(1)}; ${pB[1].toFixed(1)}) W=${params.wMax.toFixed(0)}`, toScreenX(pB[0]) - 80, toScreenY(pB[1]) - 12);
+  }
+
+  window.onload = function() {
+    recalculate();
+  };
+</script>
+
+</body>
+</html>
