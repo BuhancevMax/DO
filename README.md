@@ -7,6 +7,7 @@
 <br>
 
 [![Звіт ЛР №1](https://img.shields.io/badge/Звіт%20ЛР%20№1-Відкрити%20звіт-brightgreen?style=for-the-badge&logo=github)](reports/lab1/README.md)
+[![Завантажити PDF](https://img.shields.io/badge/PDF%20Звіт-Завантажити%20PDF-red?style=for-the-badge&logo=adobe-acrobat-reader)](reports/lab1/Звіт_ЛР1_Буханцев.pdf)
 [![Інтерактивний UI](https://img.shields.io/badge/Web%20Interface-Live%20Demo-blue?style=for-the-badge&logo=html5)](index.html)
 [![Варіант](https://img.shields.io/badge/Варіант-4%20(N=4,%20k=1)-orange?style=for-the-badge)](#)
 [![Python](https://img.shields.io/badge/Python-3.14%20%7C%20SciPy-yellow?style=for-the-badge&logo=python)](#)
@@ -17,7 +18,7 @@
 | :--- | :--- |
 | 👩‍🏫 **Перевірила:** | доцент кафедри АІС **Бурдільна Є. В.** |
 | 🏛️ **Університет:** | Кременчуцький національний університет імені Михайла Остроградського (КрНУ) |
-| 📅 **Рік:** | 2025 |
+| 📅 **Рік:** | 2026 |
 
 </div>
 
@@ -132,5 +133,5 @@ python labs/lab1/solver.py
 ---
 
 <div align="center">
-  <sub>Кафедра автоматизації та інформаційних систем • Кременчуцький національний університет імені Михайла Остроградського • 2025</sub>
+  <sub>Кафедра автоматизації та інформаційних систем • Кременчуцький національний університет імені Михайла Остроградського • 2026</sub>
 </div>

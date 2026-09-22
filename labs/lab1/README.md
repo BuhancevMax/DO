@@ -1,6 +1,7 @@
 # Лабораторна робота № 1: Двомірна задача лінійного програмування
 
 [![Звіт](https://img.shields.io/badge/Звіт-Відкрити%20звіт%20ЛР1-brightgreen?style=for-the-badge)](REPORT.md)
+[![Завантажити PDF](https://img.shields.io/badge/PDF%20Звіт-Завантажити%20PDF-red?style=for-the-badge&logo=adobe-acrobat-reader)](Звіт_ЛР1_Буханцев.pdf)
 [![Статус](https://img.shields.io/badge/Статус-Виконано-success?style=for-the-badge)](#)
 [![Варіант](https://img.shields.io/badge/Варіант-4%20(N=4,%20k=1)-blue?style=for-the-badge)](#)
 

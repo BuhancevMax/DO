@@ -30,10 +30,17 @@
 
 <br><br><br>
 
-### Кременчук 2025
+### Кременчук 2026
 </div>
 
 <hr style="border: 2px solid #003366; margin: 30px 0;">
+
+<div align="center">
+  <a href="Звіт_ЛР1_Буханцев.pdf">
+    <img src="https://img.shields.io/badge/PDF%20Версія-Завантажити%20звіт%20(PDF)-red?style=for-the-badge&logo=adobe-acrobat-reader" alt="Завантажити PDF">
+  </a>
+</div>
+<br>
 
 ## Лабораторна робота № 1
 
