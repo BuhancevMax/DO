@@ -18,9 +18,12 @@ def get_b64_image(rel_path):
     with open(abs_path, 'rb') as f:
         return 'data:image/png;base64,' + base64.b64encode(f.read()).decode('utf-8')
 
-img1_b64 = get_b64_image(os.path.join("reports", "lab1", "assets", "graph_lab1.png"))
-img2_b64 = get_b64_image(os.path.join("reports", "lab1", "assets", "graph_lab1_zoom.png"))
-img3_b64 = get_b64_image(os.path.join("reports", "lab1", "assets", "results_summary.png"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+assets_dir = os.path.join(BASE_DIR, "..", "assets")
+
+img1_b64 = get_b64_image(os.path.join(assets_dir, "graph_lab1.png"))
+img2_b64 = get_b64_image(os.path.join(assets_dir, "graph_lab1_zoom.png"))
+img3_b64 = get_b64_image(os.path.join(assets_dir, "results_summary.png"))
 
 html_template = """<!DOCTYPE html>
 <html lang="uk">
@@ -482,10 +485,7 @@ print(f"Створено HTML для друку: {html_path}")
 
 edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 pdf_targets = [
-    os.path.abspath(os.path.join("reports", "lab1", "Звіт_ЛР1_Буханцев.pdf")),
-    os.path.abspath(os.path.join("reports", "lab1", "report_lab1.pdf")),
-    os.path.abspath(os.path.join("labs", "lab1", "Звіт_ЛР1_Буханцев.pdf")),
-    os.path.abspath(os.path.join("labs", "lab1", "report_lab1.pdf"))
+    os.path.abspath(os.path.join(BASE_DIR, "..", "Звіт_ЛР1_Буханцев.pdf"))
 ]
 
 for pdf_target in pdf_targets:

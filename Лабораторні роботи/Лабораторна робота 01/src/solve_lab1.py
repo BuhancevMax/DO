@@ -86,13 +86,10 @@ w_int = W_A * int_x1 + W_B * int_x2
 print(f"Залишки (неперервний): сировина={raw_left_cont:.2f}, машинний час={time_left_cont:.2f}")
 print(f"Залишки (цілочисельний): сировина={raw_left_int:.2f}, машинний час={time_left_int:.2f}")
 
-# 4. Створення директорій для збереження графіків
-target_dirs = [
-    os.path.join("reports", "lab1", "assets"),
-    os.path.join("labs", "lab1", "assets")
-]
-for d in target_dirs:
-    os.makedirs(d, exist_ok=True)
+# 4. Створення директорії для збереження графіків
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+assets_dir = os.path.join(BASE_DIR, "..", "assets")
+os.makedirs(assets_dir, exist_ok=True)
 
 # 5. Побудова основного графіка (Рисунок 1)
 plt.style.use('seaborn-v0_8-whitegrid' if 'seaborn-v0_8-whitegrid' in plt.style.available else 'default')
@@ -167,9 +164,8 @@ ax.legend(loc='upper right', frameon=True, framealpha=0.95, facecolor='#ffffff',
 ax.grid(True, linestyle=':', alpha=0.6)
 
 plt.tight_layout()
-fig1_path = os.path.join("reports", "lab1", "assets", "graph_lab1.png")
+fig1_path = os.path.join(assets_dir, "graph_lab1.png")
 fig.savefig(fig1_path, dpi=300)
-fig.savefig(os.path.join("labs", "lab1", "assets", "graph_lab1.png"), dpi=300)
 plt.close(fig)
 print(f"Збережено графік: {fig1_path}")
 
@@ -226,9 +222,8 @@ ax_z.legend(loc='lower left', frameon=True, framealpha=0.95, facecolor='#ffffff'
 ax_z.grid(True, linestyle=':', alpha=0.6)
 
 plt.tight_layout()
-fig2_path = os.path.join("reports", "lab1", "assets", "graph_lab1_zoom.png")
+fig2_path = os.path.join(assets_dir, "graph_lab1_zoom.png")
 fig_zoom.savefig(fig2_path, dpi=300)
-fig_zoom.savefig(os.path.join("labs", "lab1", "assets", "graph_lab1_zoom.png"), dpi=300)
 plt.close(fig_zoom)
 print(f"Збережено детальний графік: {fig2_path}")
 
@@ -270,9 +265,8 @@ for (r, c_idx), cell in table.get_celld().items():
 plt.title('Зведені результати розв’язання задачі оптимізації плану виробництва (ЛР № 1, Варіант 4)', 
           fontsize=12, fontweight='bold', pad=15)
 plt.tight_layout()
-fig3_path = os.path.join("reports", "lab1", "assets", "results_summary.png")
+fig3_path = os.path.join(assets_dir, "results_summary.png")
 fig_t.savefig(fig3_path, dpi=300)
-fig_t.savefig(os.path.join("labs", "lab1", "assets", "results_summary.png"), dpi=300)
 plt.close(fig_t)
 print(f"Збережено зведення результатів: {fig3_path}")
 print("Усі розрахунки та графіки успішно згенеровано!")
